@@ -26,7 +26,9 @@ func main() {
 	defer conn.Close()
 
 	req := make([]byte, 1024)
-	
+
+	fmt.Printf("Received request: %s\n", string(req))
+
 	if !strings.HasPrefix(string(req), "GET / HTTP/1.1") {
 		conn.Write([]byte("HTTP/1.1 404 Not Found\r\n\r\n"))
 		return
