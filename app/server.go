@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"net"
 	"os"
 	"strings"
@@ -26,20 +25,9 @@ func main() {
 
 	defer conn.Close()
 
-	buf := make([]byte, 0, 4096) 
-	tmp := make([]byte, 256)     
-	for {
-		n, err := conn.Read(tmp)
-		if err != nil {
-			if err != io.EOF {
-				fmt.Println("read error:", err)
-			}
-			break
-		}
-		buf = append(buf, tmp[:n]...)
-	}
-
-	if !strings.HasPrefix(string(buf), "GET / HTTP/1.1") {
+	req := make([]byte, 1024)
+	
+	if !strings.HasPrefix(string(req), "GET / HTTP/1.1") {
 		conn.Write([]byte("HTTP/1.1 404 Not Found\r\n\r\n"))
 		return
 	}
