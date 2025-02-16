@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 	"os"
+	"strings"
 )
 
 var _ = net.Listen
@@ -28,16 +29,20 @@ func main() {
 	buf := make([]byte, 0, 4096) 
 	tmp := make([]byte, 256)     
 	for {
-			n, err := conn.Read(tmp)
-			if err != nil {
-					if err != io.EOF {
-							fmt.Println("read error:", err)
-					}
-					break
+		n, err := conn.Read(tmp)
+		if err != nil {
+			if err != io.EOF {
+				fmt.Println("read error:", err)
 			}
-			buf = append(buf, tmp[:n]...)
-    }
+			break
+		}
+		buf = append(buf, tmp[:n]...)
+	}
 
-	fmt.Println("total size:", len(buf))
+	if !strings.HasPrefix(string(buf), "GET / HTTP/1.1") {
+		conn.Write([]byte("HTTP/1.1 404 Not Found\r\n\r\n"))
+		return
+	}
+
 	conn.Write([]byte("HTTP/1.1 200 OK\r\n\r\n"))
 }
