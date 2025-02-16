@@ -26,15 +26,72 @@ func main() {
 	defer conn.Close()
 
 	req := make([]byte, 1024)
-	
-	conn.Read(req)
+
+	_, err = conn.Read(req)
+    if err != nil {
+        fmt.Println("Error reading request:", err)
+        return
+    }
 
 	fmt.Printf("Received request: %s\n", string(req))
 
-	if !strings.HasPrefix(string(req), "GET / HTTP/1.1") {
-		conn.Write([]byte("HTTP/1.1 404 Not Found\r\n\r\n"))
+	lines := strings.Split(string(req), "\r\n")
+	if len(lines) == 0 {
+		conn.Write([]byte(createResponse(400, nil, "")))
 		return
 	}
 
-	conn.Write([]byte("HTTP/1.1 200 OK\r\n\r\n"))
+	parts := strings.Split(lines[0], " ")
+	if len(parts) < 2 {
+		conn.Write([]byte(createResponse(400, nil, "")))
+		return
+	}
+
+	path := parts[1]
+
+	switch {
+		case path == "/":
+			conn.Write([]byte(createResponse(200, nil, "")))
+
+		case strings.HasPrefix(path, "/echo/"):
+			content := strings.TrimPrefix(path, "/echo/")
+
+			headers := map[string]string {
+				"Content-Type": "text/plain",
+				"Content-Length": fmt.Sprintf("%d", len(content)),
+			}
+
+			conn.Write([]byte(createResponse(200, headers, content)))
+			
+		default:
+			conn.Write([]byte(createResponse(404, nil, "")))
+	}
+}
+
+func createResponse(status int, headers map[string]string, body string) string {
+	var statusText string
+	switch status {
+	case 200:
+		statusText = "OK"
+	case 400:
+		statusText = "Bad Request"
+	case 404:
+		statusText = "Not Found"
+	default:
+		statusText = "Unknown"
+	}
+
+	response := fmt.Sprintf("HTTP/1.1 %d %s\r\n", status, statusText)
+
+	for key, value := range headers {
+		response += fmt.Sprintf("%s: %s\r\n", key, value)
+	}
+
+	response += "\r\n"
+
+	if body != "" {
+		response += body
+	}
+
+	return response
 }
