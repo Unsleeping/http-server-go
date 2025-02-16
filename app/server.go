@@ -26,6 +26,8 @@ func main() {
 	defer conn.Close()
 
 	req := make([]byte, 1024)
+	
+	conn.Read(req)
 
 	fmt.Printf("Received request: %s\n", string(req))
 
