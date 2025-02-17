@@ -54,7 +54,7 @@ func HandleConnection(conn net.Conn, directory string) {
 		case strings.HasPrefix(path, "/echo/"):
 			content, responseHeaders := EchoHandler(path, headers)
 
-			conn.Write([]byte(CreateResponse(200, responseHeaders, content)))
+			conn.Write([]byte(CreateResponse(200, responseHeaders, string(content))))
 			
 		default:
 			conn.Write([]byte(CreateResponse(404, nil, "")))
