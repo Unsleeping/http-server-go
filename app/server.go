@@ -49,6 +49,8 @@ func main() {
 
 	path := parts[1]
 
+	fmt.Print("Path: ", path)
+
 	switch {
 		case path == "/":
 			conn.Write([]byte(createResponse(200, nil, "")))
