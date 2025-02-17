@@ -17,20 +17,29 @@ func main() {
 		os.Exit(1)
 	}
 	
-	conn, err := listener.Accept()
-	if err != nil {
-		fmt.Println("Error accepting connection: ", err.Error())
-		os.Exit(1)
-	}
+	defer listener.Close()
+	
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			fmt.Println("Error accepting connection: ", err.Error())
+			continue
+		}
+		go handleConnection(conn)
+	} 
 
+
+}
+
+func handleConnection(conn net.Conn) {
 	defer conn.Close()
 
 	req := make([]byte, 1024)
 
-	_, err = conn.Read(req)
+	_, err := conn.Read(req)
     if err != nil {
-        fmt.Println("Error reading request:", err)
-        return
+			fmt.Println("Error reading request:", err)
+			return
     }
 
 	fmt.Printf("Received request: %s\n", string(req))
