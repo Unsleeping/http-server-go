@@ -49,11 +49,36 @@ func main() {
 
 	path := parts[1]
 
-	fmt.Print("Path: ", path)
+	fmt.Println("Path: ", path)
+
+	headers := lines[1:]
+
+	fmt.Println("headers: ", headers)
 
 	switch {
 		case path == "/":
 			conn.Write([]byte(createResponse(200, nil, "")))
+
+		case path == "/user-agent":
+			userAgent := ""
+			userAgentPrefix := "User-Agent:"
+			for _, header := range headers {
+				if strings.HasPrefix(header, userAgentPrefix) {
+					userAgent = strings.TrimSpace(strings.TrimPrefix(header, userAgentPrefix))
+					break
+				}
+			}
+
+			responseHeaders := map[string]string {
+				"Content-Type": "text/plain",
+				"Content-Length": fmt.Sprintf("%d", len(userAgent)),
+			}
+
+			content := userAgent
+
+			conn.Write([]byte(createResponse(200, responseHeaders, content)))
+
+
 
 		case strings.HasPrefix(path, "/echo/"):
 			content := strings.TrimPrefix(path, "/echo/")
