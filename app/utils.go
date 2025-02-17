@@ -5,6 +5,8 @@ import "fmt"
 func CreateResponse(status int, headers map[string]string, body string) string {
 	var statusText string
 	switch status {
+	case 201:
+		statusText = "Created"
 	case 200:
 		statusText = "OK"
 	case 400:

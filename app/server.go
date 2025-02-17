@@ -66,20 +66,18 @@ func handleConnection(conn net.Conn, directory string) {
 		return
 	}
 
-	path := parts[1]
+	method, path := parts[0], parts[1]
+	headers, body := lines[1 : len(lines) - 1], lines[len(lines) - 1]
 
-	fmt.Println("Path: ", path)
+	trimmedBody := strings.TrimRight(body, "\x00")
 
-	headers := lines[1:]
-
-	fmt.Println("headers: ", headers)
 
 	switch {
 		case path == "/":
 			conn.Write([]byte(CreateResponse(200, nil, "")))
 
 		case strings.HasPrefix(path, "/files/"):
-			status, responseHeaders, fileContent := FilesHandler(path, directory)
+			status, responseHeaders, fileContent := FilesHandler(path, directory, method, trimmedBody)
 
 			conn.Write([]byte(CreateResponse(status, responseHeaders, string(fileContent))))
 

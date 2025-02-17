@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func FilesHandler(path string, directory string)(int, map[string]string, []byte) {
+func GetFilesHandler(path string, directory string) (int, map[string]string, []byte) {
 	fileName := strings.TrimPrefix(path, "/files/")
 	filePath := filepath.Join(directory, fileName)
 	fileInfo, err := os.Stat(filePath)
@@ -35,4 +35,36 @@ func FilesHandler(path string, directory string)(int, map[string]string, []byte)
 	}
 
 	return 200, responseHeaders, fileContent
+}
+
+func PostFilesHandler(path string, directory string, fileContent string)(int, map[string]string, []byte) {
+	fmt.Println("File content: ", fileContent, len(fileContent))
+	fileName := strings.TrimPrefix(path, "/files/")
+	filePath := filepath.Join(directory, fileName)
+
+	data := []byte(fileContent)
+
+	err := os.WriteFile(filePath, data, 0644)
+	if err != nil {
+		return 500, nil, []byte("Internal Server Error")
+	}
+
+	responseHeaders := map[string]string {
+		"Content-Type": "text/plain",
+		"Content-Length": fmt.Sprintf("%d", len(fileContent)),
+	}
+
+	return 201, responseHeaders, data
+}
+
+func FilesHandler(path string, directory string, method string, fileContent string)(int, map[string]string, []byte) {
+	if method == "GET" {
+		return GetFilesHandler(path, directory)
+	}
+
+	if method == "POST" {
+		return PostFilesHandler(path, directory, fileContent)
+	}
+
+	return 405, nil, []byte{}
 }
