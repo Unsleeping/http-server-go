@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 func CreateResponse(status int, headers map[string]string, body string) string {
 	var statusText string
@@ -30,4 +33,17 @@ func CreateResponse(status int, headers map[string]string, body string) string {
 	}
 
 	return response
+}
+
+
+func GetHeaderValue(headers []string, key string) string {
+	value := ""
+	for _, header := range headers {
+		if strings.HasPrefix(header, key) {
+			value = strings.TrimSpace(strings.TrimPrefix(header, key))
+			break
+		}
+	}
+
+	return value
 }
