@@ -14,11 +14,11 @@ func GetFilesHandler(path string, directory string) (int, map[string]string, []b
 
 	if err != nil {
 		if os.IsNotExist(err) {
-			return 404, nil, []byte{}
+			return 404, nil, nil
 		} 
 
 		fmt.Println("Error getting file info:", err)
-		return 500, nil, []byte{}
+		return 500, nil, nil
 	}
 
 	fileSize := fileInfo.Size()
@@ -31,7 +31,7 @@ func GetFilesHandler(path string, directory string) (int, map[string]string, []b
 	fileContent, err := os.ReadFile(filePath)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
-		return 500, nil, []byte{}
+		return 500, nil, nil
 	}
 
 	return 200, responseHeaders, fileContent
@@ -65,5 +65,5 @@ func FilesHandler(path string, directory string, method string, fileContent stri
 		return PostFilesHandler(path, directory, fileContent)
 	}
 
-	return 405, nil, []byte{}
+	return 405, nil, nil
 }
