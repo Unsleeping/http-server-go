@@ -7,9 +7,6 @@ import (
 	"os"
 )
 
-var _ = net.Listen
-var _ = os.Exit
-
 func main() {
 	directory := flag.String("directory", "", "the directory to serve files from")
 

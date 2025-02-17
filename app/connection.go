@@ -12,10 +12,10 @@ func HandleConnection(conn net.Conn, directory string) {
 	req := make([]byte, 1024)
 
 	_, err := conn.Read(req)
-    if err != nil {
-			fmt.Println("Error reading request:", err)
-			return
-    }
+	if err != nil {
+		fmt.Println("Error reading request:", err)
+		return
+	}
 
 	fmt.Printf("Received request: %s\n", string(req))
 
