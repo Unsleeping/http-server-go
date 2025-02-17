@@ -38,7 +38,6 @@ func GetFilesHandler(path string, directory string) (int, map[string]string, []b
 }
 
 func PostFilesHandler(path string, directory string, fileContent string)(int, map[string]string, []byte) {
-	fmt.Println("File content: ", fileContent, len(fileContent))
 	fileName := strings.TrimPrefix(path, "/files/")
 	filePath := filepath.Join(directory, fileName)
 

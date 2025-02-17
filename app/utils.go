@@ -37,7 +37,8 @@ func CreateResponse(status int, headers map[string]string, body string) string {
 
 
 func GetHeaderValue(headers []string, key string) string {
-	value := ""
+	var value string
+
 	for _, header := range headers {
 		if strings.HasPrefix(header, key) {
 			value = strings.TrimSpace(strings.TrimPrefix(header, key))
@@ -52,11 +53,13 @@ func GetHeaderValue(headers []string, key string) string {
 func GetEncodingString(headers []string) string {
 	dirtyAcceptEncodingString := GetHeaderValue(headers, "Accept-Encoding:")
 
-	acceptEncoding := ""
+	var acceptEncoding string
 
 	if strings.Contains(dirtyAcceptEncodingString, ",") {
 		parts := strings.Split(dirtyAcceptEncodingString, ",")
-		validParts := []string{}
+		
+		var validParts []string
+
 		for _, part := range parts {
 			part = strings.TrimSpace(part)
 			if part == "gzip" {

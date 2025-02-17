@@ -25,26 +25,22 @@ func EchoHandler(path string, headers []string) ([]byte, map[string]string) {
 	if acceptEncoding == "gzip" {
 		var buf bytes.Buffer
 		gzipWriter := gzip.NewWriter(&buf)
+
 		_, err := gzipWriter.Write([]byte(content))
 		if err != nil {
-				fmt.Println("Error gzipping content:", err)
-				return []byte(content), responseHeaders
+			fmt.Println("Error gzipping content:", err)
+			return []byte(content), responseHeaders
 		}
 		err = gzipWriter.Close()
 		if err != nil {
-				fmt.Println("Error closing gzip writer:", err)
-				return []byte(content), responseHeaders
+			fmt.Println("Error closing gzip writer:", err)
+			return []byte(content), responseHeaders
 		}
 		responseBody = buf.Bytes()
 		responseHeaders["Content-Length"] = fmt.Sprintf("%d", len(responseBody))
 	} else {
-			responseBody = []byte(content)
+		responseBody = []byte(content)
 	}
-
-
-
-
-
 
 	return responseBody, responseHeaders
 }
