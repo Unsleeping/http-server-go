@@ -1,9 +1,11 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -11,12 +13,21 @@ var _ = net.Listen
 var _ = os.Exit
 
 func main() {
+	directory := flag.String("directory", "", "the directory to serve files from")
+
+	flag.Parse()
+
+	if *directory != "" {
+		fmt.Printf("Serving files from directory: %s\n", *directory)
+	}
+
+
 	listener, err := net.Listen("tcp", "0.0.0.0:4221")
 	if err != nil {
 		fmt.Println("Failed to bind to port 4221")
 		os.Exit(1)
 	}
-	
+
 	defer listener.Close()
 	
 	for {
@@ -25,14 +36,16 @@ func main() {
 			fmt.Println("Error accepting connection: ", err.Error())
 			continue
 		}
-		go handleConnection(conn)
+		go handleConnection(conn, *directory)
 	} 
 
 
 }
 
-func handleConnection(conn net.Conn) {
+func handleConnection(conn net.Conn, directory string) {
 	defer conn.Close()
+
+
 
 	req := make([]byte, 1024)
 
@@ -67,6 +80,37 @@ func handleConnection(conn net.Conn) {
 	switch {
 		case path == "/":
 			conn.Write([]byte(createResponse(200, nil, "")))
+
+		case strings.HasPrefix(path, "/files/"):
+			fileName := strings.TrimPrefix(path, "/files/")
+			filePath := filepath.Join(directory, fileName)
+			fileInfo, err := os.Stat(filePath)
+
+			if err != nil {
+				if os.IsNotExist(err) {
+					conn.Write([]byte(createResponse(404, nil, "")))
+				} else {
+					fmt.Println("Error getting file info:", err)
+					conn.Write([]byte(createResponse(500, nil, "")))
+				}
+				return
+			}
+
+			fileSize := fileInfo.Size()
+
+			responseHeaders := map[string]string {
+				"Content-Type": "application/octet-stream",
+				"Content-Length": fmt.Sprintf("%d", fileSize),
+			}
+
+			fileContent, err := os.ReadFile(filePath)
+			if err != nil {
+				fmt.Println("Error reading file:", err)
+				conn.Write([]byte(createResponse(500, nil, "")))
+				return
+			}
+
+			conn.Write([]byte(createResponse(200, responseHeaders, string(fileContent))))
 
 		case path == "/user-agent":
 			userAgent := ""
