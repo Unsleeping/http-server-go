@@ -47,3 +47,29 @@ func GetHeaderValue(headers []string, key string) string {
 
 	return value
 }
+
+
+func GetEncodingString(headers []string) string {
+	dirtyAcceptEncodingString := GetHeaderValue(headers, "Accept-Encoding:")
+
+	acceptEncoding := ""
+
+	if strings.Contains(dirtyAcceptEncodingString, ",") {
+		parts := strings.Split(dirtyAcceptEncodingString, ",")
+		validParts := []string{}
+		for _, part := range parts {
+			part = strings.TrimSpace(part)
+			if part == "gzip" {
+        validParts = append(validParts, part)
+      }
+		}
+
+		return strings.Join(validParts, ",")
+	}
+
+	if strings.Contains(dirtyAcceptEncodingString, "gzip") {
+		acceptEncoding = dirtyAcceptEncodingString
+	}
+
+	return acceptEncoding
+}

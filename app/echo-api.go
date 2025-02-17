@@ -8,16 +8,15 @@ import (
 func EchoHandler(path string, headers []string) (string, map[string]string) {
 	content := strings.TrimPrefix(path, "/echo/")
 
-	acceptEncoding := GetHeaderValue(headers, "Accept-Encoding:")
+	acceptEncoding := GetEncodingString(headers)
 
-	fmt.Println("acceptEncoding: ", acceptEncoding)
 
 	responseHeaders := map[string]string {
 		"Content-Type": "text/plain",
 		"Content-Length": fmt.Sprintf("%d", len(content)),
 	}
 
-	if strings.Contains(acceptEncoding, "gzip") {
+	if acceptEncoding != "" {
 		responseHeaders["Content-Encoding"] = acceptEncoding
 	}
 
