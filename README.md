@@ -1,37 +1,32 @@
+# Go HTTP Server Implementation
+
 [![progress-banner](https://backend.codecrafters.io/progress/http-server/ecc78c2d-3aba-48b3-b3e4-3e08af08235f)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
 
-This is a starting point for Go solutions to the
-["Build Your Own HTTP server" Challenge](https://app.codecrafters.io/courses/http-server/overview).
+## Project Description
 
-[HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) is the
-protocol that powers the web. In this challenge, you'll build a HTTP/1.1 server
-that is capable of serving multiple clients.
+This project is an implementation of an HTTP/1.1 server in Go, developed as part of the "Build Your Own HTTP server" challenge by CodeCrafters. The server is capable of handling multiple clients and implements various HTTP features including GET and POST requests, file serving, and gzip compression.
 
-Along the way you'll learn about TCP servers,
-[HTTP request syntax](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html),
-and more.
+## Features
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+- Basic HTTP/1.1 server implementation
+- Handling of GET and POST requests
+- File serving capabilities
+- Echo API endpoint
+- User-Agent API endpoint
+- Gzip compression support
+- Concurrent client handling
 
-# Passing the first stage
+## Technologies Used
 
-The entry point for your HTTP server implementation is in `app/server.go`. Study
-and uncomment the relevant code, and push your changes to pass the first stage:
+- Go 1.19+
+- Standard Go libraries (net, http, io, os, etc.)
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
-```
+## Getting Started
 
-Time to move on to the next stage!
+1. Clone this repository
+2. Ensure you have Go 1.19 or later installed
+3. Run the server using: `go run ./app/server.go`
 
-# Stage 2 & beyond
+## Usage
 
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `go (1.19)` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `app/server.go`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+The server runs on port 4221 by default.
